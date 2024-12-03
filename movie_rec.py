@@ -6,6 +6,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 movies = pd.read_csv('movies.csv')
 
+movies['name'] = movies['title'].str.extract(r'^(.*)\s\(\d{4}\)$')  
+movies['year'] = movies['title'].str.extract(r'\((\d{4})\)$')        
+
+movies['title'] = movies['name']
+
 encoder = OneHotEncoder()
 genres_encoded = encoder.fit_transform(movies[['genres']]).toarray()
 
