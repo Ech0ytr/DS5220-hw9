@@ -1,5 +1,6 @@
 
 import pandas as pd
+import numpy as np
 import streamlit as st
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics.pairwise import cosine_similarity
@@ -8,17 +9,16 @@ movies = pd.read_csv('movies.csv')
 
 movies['name'] = movies['title'].str.extract(r'^(.*)\s\(\d{4}\)$')  
 movies['year'] = movies['title'].str.extract(r'\((\d{4})\)$')        
-
-movies['title'] = movies['name']
+movies['title'] = movies['name']  
 
 encoder = OneHotEncoder()
 genres_encoded = encoder.fit_transform(movies[['genres']]).toarray()
 
-movies['features'] = list(genres_encoded)
+movies_features = genres_encoded
 
 def recommend_movies(movie_name, k=4):
     movie_index = movies[movies['title'] == movie_name].index[0]
-    similarities = cosine_similarity([movies['features'][movie_index]], movies['features'])
+    similarities = cosine_similarity([movies_features[movie_index]], movies_features)
     similar_indices = similarities.argsort()[0][-k-1:-1][::-1]
     recommendations = movies.iloc[similar_indices]['title'].tolist()
     return recommendations
